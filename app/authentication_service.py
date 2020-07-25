@@ -19,4 +19,7 @@ class AuthenticationService:
             raise PermissionError()
         current_otp = otp1
 
-        raise NotImplementedError()
+        if password_from_db == hashed_password and otp == current_otp:
+            return True
+        else:
+            return False
