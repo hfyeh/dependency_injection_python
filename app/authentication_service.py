@@ -25,6 +25,9 @@ class AuthenticationService:
         if password_from_db == hashed_password and otp == current_otp:
             return True
         else:
+            response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
+            response.raise_for_status()
+
             try:
                 slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
                 response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
