@@ -4,6 +4,7 @@ import hashlib
 import requests
 from slack import WebClient
 from slack.errors import SlackApiError
+import logging
 
 
 class AuthenticationService:
@@ -41,6 +42,11 @@ class AuthenticationService:
                 response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
             except SlackApiError as e:
                 assert e.response['ok'] is False
+
+            response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
+            response.raise_for_status()
+            failed_count = response.json()['failed_count']
+            logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
 
