@@ -16,11 +16,9 @@ class AuthenticationService:
         hashed_password = hash
 
         response = requests.post('https://sharefun.com/api/otp', data={username: username})
-        if response.status_code == requests.codes.ok:
-            otp1 = response.json()['otp']
-        else:
+        if not (response.status_code == requests.codes.ok):
             raise PermissionError()
-        current_otp = otp1
+        current_otp = response.json()['otp']
 
         if password_from_db == hashed_password and otp == current_otp:
             response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
