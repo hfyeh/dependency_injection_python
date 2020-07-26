@@ -3,6 +3,7 @@ from .user import User
 import hashlib
 import requests
 from slack import WebClient
+from slack.errors import SlackApiError
 
 
 class AuthenticationService:
@@ -24,8 +25,10 @@ class AuthenticationService:
         if password_from_db == hashed_password and otp == current_otp:
             return True
         else:
-            return False
+            try:
+                slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
+                response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
+            except SlackApiError as e:
+                assert e.response['ok'] is False
 
-    def notify(self, message: str) -> None:
-        slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
-        slack_client.chat_postMessage(channel='#channel', text=message)
+            return False
