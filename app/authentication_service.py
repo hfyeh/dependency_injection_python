@@ -8,6 +8,13 @@ from slack.errors import SlackApiError
 
 class AuthenticationService:
     def verify(self, username: str, password: str, otp: str) -> bool:
+        response = requests.post('https://sharefun.com/api/is_locked', data={username: username})
+        response.raise_for_status()
+
+        is_acount_locked = response.json()['is_account_locked']
+        if is_acount_locked:
+            raise FailedTooManyTimesError()
+
         password_from_db = User.query.filter_by(username=username).first().password
 
         crypt = hashlib.sha256()
@@ -36,3 +43,8 @@ class AuthenticationService:
                 assert e.response['ok'] is False
 
             return False
+
+
+class FailedTooManyTimesError(OSError):
+    def __init__(self, *args, **kwargs):  # real signature unknown
+        pass
