@@ -1,6 +1,8 @@
+import os
 from .user import User
 import hashlib
 import requests
+from slack import WebClient
 
 
 class AuthenticationService:
@@ -23,3 +25,7 @@ class AuthenticationService:
             return True
         else:
             return False
+
+    def notify(self, message: str) -> None:
+        slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
+        slack_client.chat_postMessage(channel='#channel', text=message)
