@@ -55,10 +55,10 @@ class AuthenticationServiceTest(unittest.TestCase):
 
     def test_reset_failed_count_when_valid(self):
         is_valid = self._when_valid()
-        self._should_reset_failed_count()
+        self._should_reset_failed_count(DefaultUsername)
 
-    def _should_reset_failed_count(self):
-        self._failed_counter.reset.assert_called_once_with(DefaultUsername)
+    def _should_reset_failed_count(self, username):
+        self._failed_counter.reset.assert_called_once_with(username)
 
     def _when_valid(self):
         self._given_account_is_locked(False)
