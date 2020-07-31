@@ -59,6 +59,9 @@ class AuthenticationServiceTest(unittest.TestCase):
 
     def test_raise_error_when_account_is_locked(self):
         self._given_account_is_locked(True)
+        self._should_raise_error()
+
+    def _should_raise_error(self):
         with self.assertRaises(FailedTooManyTimesError):
             self._when_verify(DefaultUsername, DefaultPassword, DefaultOtp)
 
