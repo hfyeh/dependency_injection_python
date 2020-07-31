@@ -42,6 +42,10 @@ class AuthenticationServiceTest(unittest.TestCase):
         is_valid = self._when_invalid()
         self._should_be_invalid(is_valid)
 
+    def test_add_failed_count_when_invalid(self):
+        is_valid = self._when_invalid()
+        self._failed_counter.add.assert_called_once_with(DefaultUsername)
+
     def _when_invalid(self):
         self._given_account_is_locked(False)
         self._given_password(DefaultHashedPassword)
