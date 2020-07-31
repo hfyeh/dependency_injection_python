@@ -1,4 +1,4 @@
-from .authentication_service import AuthenticationService
+from .authentication_service import AuthenticationService, FailedTooManyTimesError
 from .failed_counter import IFailedCounter
 from .logging import ILogging
 from .otp_service import IOtpService

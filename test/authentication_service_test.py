@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 from unittest.mock import create_autospec
 
-from app import AuthenticationService
+from app import AuthenticationService, FailedTooManyTimesError
 
 DefaultHashedPassword = 'hashed_password'
 
@@ -56,6 +56,11 @@ class AuthenticationServiceTest(unittest.TestCase):
     def test_reset_failed_count_when_valid(self):
         is_valid = self._when_valid()
         self._should_reset_failed_count(DefaultUsername)
+
+    def test_raise_error_when_account_is_locked(self):
+        self._given_account_is_locked(True)
+        with self.assertRaises(FailedTooManyTimesError):
+            self._when_verify(DefaultUsername, DefaultPassword, DefaultOtp)
 
     def _should_reset_failed_count(self, username):
         self._failed_counter.reset.assert_called_once_with(username)
