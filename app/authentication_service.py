@@ -32,7 +32,7 @@ class AuthenticationService:
 
             return True
         else:
-            self.add_failed_count(username)
+            self._failed_counter.add_failed_count(username)
 
             self.notify(username)
 
@@ -62,10 +62,6 @@ class AuthenticationService:
             response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
         except SlackApiError as e:
             assert e.response['ok'] is False
-
-    def add_failed_count(self, username: str) -> None:
-        response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
-        response.raise_for_status()
 
 
 class FailedTooManyTimesError(OSError):
