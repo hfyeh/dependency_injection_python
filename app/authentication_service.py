@@ -1,15 +1,10 @@
 from .failed_counter import FailedCounter
+from .logging import Logging
 from .otp_service import OtpService
 from .sha_256_adapter import Sha256Adapter
 from .slack_adapter import SlackAdapter
 from .user import User
 import requests
-import logging
-
-
-class Logging:
-    def log_failed_count(self, message) -> None:
-        logging.info(message)
 
 
 class AuthenticationService:
