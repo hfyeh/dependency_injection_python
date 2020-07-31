@@ -1,3 +1,5 @@
+from abc import ABCMeta, abstractmethod
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -7,7 +9,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+class IUser(metaclass=ABCMeta):
+    @abstractmethod
+    def get_password_from_db(self, username: str) -> str:
+        pass
+
+
+class User(IUser):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
