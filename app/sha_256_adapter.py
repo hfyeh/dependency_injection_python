@@ -1,7 +1,14 @@
 import hashlib
+from abc import ABCMeta, abstractmethod
 
 
-class Sha256Adapter:
+class IHash(metaclass=ABCMeta):
+    @abstractmethod
+    def compute_hashed_password(self, password: str) -> str:
+        pass
+
+
+class Sha256Adapter(IHash):
     def compute_hashed_password(self, password: str) -> str:
         crypt = hashlib.sha256()
         crypt.update(password)
