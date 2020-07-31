@@ -18,10 +18,7 @@ class AuthenticationService:
 
         password_from_db = self.get_password_from_db(username)
 
-        crypt = hashlib.sha256()
-        crypt.update(password)
-        hash = crypt.hexdigest()
-        hashed_password = hash
+        hashed_password = self.compute_hashed_password(password)
 
         response = requests.post('https://sharefun.com/api/otp', data={username: username})
         if not (response.status_code == requests.codes.ok):
@@ -49,6 +46,12 @@ class AuthenticationService:
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def compute_hashed_password(self, password: str) -> str:
+        crypt = hashlib.sha256()
+        crypt.update(password)
+        hashed_password = crypt.hexdigest()
+        return hashed_password
 
     def get_password_from_db(self, username: str) -> str:
         password_from_db = User.query.filter_by(username=username).first().password
