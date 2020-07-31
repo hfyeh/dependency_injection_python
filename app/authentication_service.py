@@ -1,6 +1,6 @@
 from .failed_counter import FailedCounter
 from .logging import Logging
-from .otp_service import OtpService
+from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
 from .slack_adapter import SlackAdapter
 from .user import User, IUser
@@ -10,7 +10,7 @@ class AuthenticationService:
     def __init__(self):
         self._user: IUser = User()
         self._hash: IHash = Sha256Adapter()
-        self._otp_service: OtpService = OtpService()
+        self._otp_service: IOtpService = OtpService()
         self._failed_counter: FailedCounter = FailedCounter()
         self._slack_adapter: SlackAdapter = SlackAdapter()
         self._logging: Logging = Logging()
