@@ -9,11 +9,18 @@ from slack.errors import SlackApiError
 import logging
 
 
+class FailedCounter:
+    def reset_failed_count(self, username: str) -> None:
+        response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
+        response.raise_for_status()
+
+
 class AuthenticationService:
     def __init__(self):
         self._user: User = User()
         self._sha_256_adapter: Sha256Adapter = Sha256Adapter()
         self._otp_service: OtpService = OtpService()
+        self._failed_counter: FailedCounter = FailedCounter()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self.is_account_locked(username):
@@ -26,7 +33,7 @@ class AuthenticationService:
         current_otp = self._otp_service.get_current_otp(username)
 
         if password_from_db == hashed_password and otp == current_otp:
-            self.reset_failed_count(username)
+            self._failed_counter.reset_failed_count(username)
 
             return True
         else:
@@ -63,10 +70,6 @@ class AuthenticationService:
 
     def add_failed_count(self, username: str) -> None:
         response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
-        response.raise_for_status()
-
-    def reset_failed_count(self, username: str) -> None:
-        response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
         response.raise_for_status()
 
 
