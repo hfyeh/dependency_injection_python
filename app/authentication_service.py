@@ -7,13 +7,15 @@ from .user import User, IUser
 
 
 class AuthenticationService:
-    def __init__(self):
-        self._user: IUser = User()
-        self._hash: IHash = Sha256Adapter()
-        self._otp_service: IOtpService = OtpService()
-        self._failed_counter: IFailedCounter = FailedCounter()
-        self._notification: INotification = SlackAdapter()
-        self._logging: ILogging = Logging()
+    def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
+                 failed_counter: IFailedCounter = FailedCounter(), notification: INotification = SlackAdapter(),
+                 logging: ILogging = Logging()):
+        self._user: IUser = user
+        self._hash: IHash = hash
+        self._otp_service: IOtpService = otp_service
+        self._failed_counter: IFailedCounter = failed_counter
+        self._notification: INotification = notification
+        self._logging: ILogging = logging
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self._failed_counter.is_account_locked(username):
