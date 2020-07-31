@@ -35,7 +35,7 @@ class AuthenticationService:
             self._notification.notify(username)
 
             failed_count = self._failed_counter.get(username)
-            self._logging.log_failed_count(f'user: {username} failed times: {failed_count}')
+            self._logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
 

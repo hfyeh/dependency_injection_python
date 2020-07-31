@@ -4,10 +4,10 @@ from abc import ABCMeta, abstractmethod
 
 class ILogging(metaclass=ABCMeta):
     @abstractmethod
-    def log_failed_count(self, message):
+    def info(self, message):
         pass
 
 
 class Logging(ILogging):
-    def log_failed_count(self, message) -> None:
+    def info(self, message) -> None:
         logging.info(message)
