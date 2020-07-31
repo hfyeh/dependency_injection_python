@@ -9,10 +9,7 @@ import logging
 
 class AuthenticationService:
     def verify(self, username: str, password: str, otp: str) -> bool:
-        response = requests.post('https://sharefun.com/api/is_locked', data={username: username})
-        response.raise_for_status()
-
-        is_acount_locked = response.json()['is_account_locked']
+        is_acount_locked = self.is_account_locked(username)
         if is_acount_locked:
             raise FailedTooManyTimesError()
 
@@ -34,6 +31,12 @@ class AuthenticationService:
             self.log_failed_count(username)
 
             return False
+
+    def is_account_locked(self, username: str) -> bool:
+        response = requests.post('https://sharefun.com/api/is_locked', data={username: username})
+        response.raise_for_status()
+        is_acount_locked = response.json()['is_account_locked']
+        return is_acount_locked
 
     def log_failed_count(self, username: str) -> None:
         failed_count = self.get_failed_count(username)
