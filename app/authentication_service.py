@@ -1,7 +1,7 @@
 from .failed_counter import FailedCounter
 from .logging import Logging
 from .otp_service import OtpService
-from .sha_256_adapter import Sha256Adapter
+from .sha_256_adapter import Sha256Adapter, IHash
 from .slack_adapter import SlackAdapter
 from .user import User, IUser
 
@@ -9,7 +9,7 @@ from .user import User, IUser
 class AuthenticationService:
     def __init__(self):
         self._user: IUser = User()
-        self._sha_256_adapter: Sha256Adapter = Sha256Adapter()
+        self._hash: IHash = Sha256Adapter()
         self._otp_service: OtpService = OtpService()
         self._failed_counter: FailedCounter = FailedCounter()
         self._slack_adapter: SlackAdapter = SlackAdapter()
@@ -21,7 +21,7 @@ class AuthenticationService:
 
         password_from_db = self._user.get_password(username)
 
-        hashed_password = self._sha_256_adapter.compute(password)
+        hashed_password = self._hash.compute(password)
 
         current_otp = self._otp_service.get_current_otp(username)
 
