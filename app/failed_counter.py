@@ -15,3 +15,9 @@ class FailedCounter:
         response.raise_for_status()
         failed_count = response.json()['failed_count']
         return failed_count
+
+    def is_account_locked(self, username: str) -> bool:
+        response = requests.post('https://sharefun.com/api/is_locked', data={username: username})
+        response.raise_for_status()
+        is_acount_locked = response.json()['is_account_locked']
+        return is_acount_locked

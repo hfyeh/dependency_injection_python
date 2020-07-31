@@ -4,7 +4,6 @@ from .otp_service import OtpService
 from .sha_256_adapter import Sha256Adapter
 from .slack_adapter import SlackAdapter
 from .user import User
-import requests
 
 
 class AuthenticationService:
@@ -17,7 +16,7 @@ class AuthenticationService:
         self._logging: Logging = Logging()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        if self.is_account_locked(username):
+        if self._failed_counter.is_account_locked(username):
             raise FailedTooManyTimesError()
 
         password_from_db = self._user.get_password_from_db(username)
@@ -39,12 +38,6 @@ class AuthenticationService:
             self._logging.log_failed_count(f'user: {username} failed times: {failed_count}')
 
             return False
-
-    def is_account_locked(self, username: str) -> bool:
-        response = requests.post('https://sharefun.com/api/is_locked', data={username: username})
-        response.raise_for_status()
-        is_acount_locked = response.json()['is_account_locked']
-        return is_acount_locked
 
 
 class FailedTooManyTimesError(OSError):
