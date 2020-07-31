@@ -1,7 +1,27 @@
+from abc import ABCMeta, abstractmethod
+
 import requests
 
 
-class FailedCounter:
+class IFailedCounter(metaclass=ABCMeta):
+    @abstractmethod
+    def reset_failed_count(self, username: str) -> None:
+        pass
+
+    @abstractmethod
+    def add_failed_count(self, username: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_failed_count(self, username: str) -> int:
+        pass
+
+    @abstractmethod
+    def is_account_locked(self, username: str) -> bool:
+        pass
+
+
+class FailedCounter(IFailedCounter):
     def reset_failed_count(self, username: str) -> None:
         response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
         response.raise_for_status()
