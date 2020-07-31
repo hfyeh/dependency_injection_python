@@ -23,8 +23,7 @@ class AuthenticationService:
         current_otp = self.get_current_otp(username)
 
         if password_from_db == hashed_password and otp == current_otp:
-            response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
-            response.raise_for_status()
+            self.reset_failed_count(username)
 
             return True
         else:
@@ -43,6 +42,10 @@ class AuthenticationService:
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def reset_failed_count(self, username: str) -> None:
+        response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
+        response.raise_for_status()
 
     def get_current_otp(self, username: str) -> str:
         response = requests.post('https://sharefun.com/api/otp', data={username: username})
