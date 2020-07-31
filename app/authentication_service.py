@@ -1,18 +1,11 @@
 import os
+
+from .sha_256_adapter import Sha256Adapter
 from .user import User
-import hashlib
 import requests
 from slack import WebClient
 from slack.errors import SlackApiError
 import logging
-
-
-class Sha256Adapter:
-    def compute_hashed_password(self, password: str) -> str:
-        crypt = hashlib.sha256()
-        crypt.update(password)
-        hashed_password = crypt.hexdigest()
-        return hashed_password
 
 
 class AuthenticationService:
