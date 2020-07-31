@@ -16,7 +16,7 @@ class AuthenticationService:
         if is_acount_locked:
             raise FailedTooManyTimesError()
 
-        password_from_db = User.query.filter_by(username=username).first().password
+        password_from_db = self.get_password_from_db(username)
 
         crypt = hashlib.sha256()
         crypt.update(password)
@@ -49,6 +49,10 @@ class AuthenticationService:
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def get_password_from_db(self, username: str) -> str:
+        password_from_db = User.query.filter_by(username=username).first().password
+        return password_from_db
 
 
 class FailedTooManyTimesError(OSError):
