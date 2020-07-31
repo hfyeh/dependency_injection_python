@@ -39,13 +39,16 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._should_be_valid(is_valid)
 
     def test_is_invalid(self):
+        is_valid = self._when_invalid()
+        self._should_be_invalid(is_valid)
+
+    def _when_invalid(self):
         self._given_account_is_locked(False)
         self._given_password(DefaultHashedPassword)
         self._given_hash(DefaultHashedPassword)
         self._given_otp(DefaultOtp)
-
         is_valid = self._when_verify(DefaultUsername, DefaultPassword, 'wrong_otp')
-        self._should_be_invalid(is_valid)
+        return is_valid
 
     def _should_be_invalid(self, is_valid):
         self.assertFalse(is_valid)
