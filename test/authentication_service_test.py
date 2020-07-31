@@ -30,12 +30,7 @@ class AuthenticationServiceTest(unittest.TestCase):
                                                              self._logging)
 
     def test_is_valid(self):
-        self._given_account_is_locked(False)
-        self._given_password(DefaultHashedPassword)
-        self._given_hash(DefaultHashedPassword)
-        self._given_otp(DefaultOtp)
-
-        is_valid = self._when_verify(DefaultUsername, DefaultPassword, DefaultOtp)
+        is_valid = self._when_valid()
         self._should_be_valid(is_valid)
 
     def test_is_invalid(self):
@@ -59,13 +54,16 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._should_log_failed_count()
 
     def test_reset_failed_count_when_valid(self):
+        is_valid = self._when_valid()
+        self._failed_counter.reset.assert_called_once_with(DefaultUsername)
+
+    def _when_valid(self):
         self._given_account_is_locked(False)
         self._given_password(DefaultHashedPassword)
         self._given_hash(DefaultHashedPassword)
         self._given_otp(DefaultOtp)
-
         is_valid = self._when_verify(DefaultUsername, DefaultPassword, DefaultOtp)
-        self._failed_counter.reset.assert_called_once_with(DefaultUsername)
+        return is_valid
 
     def _should_log_failed_count(self):
         self._logging.info.assert_called_once()
