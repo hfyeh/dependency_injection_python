@@ -1,22 +1,10 @@
-import os
-
 from .failed_counter import FailedCounter
 from .otp_service import OtpService
 from .sha_256_adapter import Sha256Adapter
+from .slack_adapter import SlackAdapter
 from .user import User
 import requests
-from slack import WebClient
-from slack.errors import SlackApiError
 import logging
-
-
-class SlackAdapter:
-    def notify(self, username: str) -> None:
-        try:
-            slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
-            response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
-        except SlackApiError as e:
-            assert e.response['ok'] is False
 
 
 class AuthenticationService:
