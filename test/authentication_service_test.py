@@ -4,6 +4,8 @@ from unittest.mock import create_autospec
 
 from app import AuthenticationService
 
+DefaultPassword = '123456'
+
 DefaultUsername = 'sharefun'
 
 
@@ -31,7 +33,7 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._otp_service.get_current_otp = create_autospec(self._otp_service.get_current_otp,
                                                             return_value='current_otp')
 
-        is_valid = self._authentication_service.verify(DefaultUsername, '123456', 'current_otp')
+        is_valid = self._authentication_service.verify(DefaultUsername, DefaultPassword, 'current_otp')
         self.assertTrue(is_valid)
 
 
