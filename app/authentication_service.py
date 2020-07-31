@@ -34,7 +34,8 @@ class AuthenticationService:
 
             self._slack_adapter.notify(username)
 
-            self.log_failed_count(username, self._failed_counter.get_failed_count(username))
+            failed_count = self._failed_counter.get_failed_count(username)
+            self.log_failed_count(username, failed_count)
 
             return False
 
