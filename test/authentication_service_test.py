@@ -44,6 +44,9 @@ class AuthenticationServiceTest(unittest.TestCase):
 
     def test_add_failed_count_when_invalid(self):
         is_valid = self._when_invalid()
+        self._should_add_failed_count()
+
+    def _should_add_failed_count(self):
         self._failed_counter.add.assert_called_once_with(DefaultUsername)
 
     def _when_invalid(self):
