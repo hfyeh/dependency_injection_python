@@ -1,4 +1,4 @@
-from .failed_counter import FailedCounter
+from .failed_counter import FailedCounter, IFailedCounter
 from .logging import Logging
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
@@ -11,7 +11,7 @@ class AuthenticationService:
         self._user: IUser = User()
         self._hash: IHash = Sha256Adapter()
         self._otp_service: IOtpService = OtpService()
-        self._failed_counter: FailedCounter = FailedCounter()
+        self._failed_counter: IFailedCounter = FailedCounter()
         self._slack_adapter: SlackAdapter = SlackAdapter()
         self._logging: Logging = Logging()
 
