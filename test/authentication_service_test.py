@@ -33,11 +33,14 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._given_account_is_locked(False)
         self._given_password(DefaultHashedPassword)
         self._given_hash(DefaultHashedPassword)
-        self._otp_service.get_current_otp = create_autospec(self._otp_service.get_current_otp,
-                                                            return_value=DefaultOtp)
+        self._given_otp()
 
         is_valid = self._authentication_service.verify(DefaultUsername, DefaultPassword, DefaultOtp)
         self.assertTrue(is_valid)
+
+    def _given_otp(self):
+        self._otp_service.get_current_otp = create_autospec(self._otp_service.get_current_otp,
+                                                            return_value=DefaultOtp)
 
     def _given_hash(self, password):
         self._hash.compute = create_autospec(self._hash.compute, return_value=password)
