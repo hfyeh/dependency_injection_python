@@ -45,14 +45,8 @@ class AuthenticationService:
         return is_acount_locked
 
     def log_failed_count(self, username: str) -> None:
-        failed_count = self.get_failed_count(username)
+        failed_count = self._failed_counter.get_failed_count(username)
         logging.info(f'user: {username} failed times: {failed_count}')
-
-    def get_failed_count(self, username: str) -> int:
-        response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
-        response.raise_for_status()
-        failed_count = response.json()['failed_count']
-        return failed_count
 
 
 class FailedTooManyTimesError(OSError):
