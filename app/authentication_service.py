@@ -27,8 +27,7 @@ class AuthenticationService:
 
             return True
         else:
-            response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
-            response.raise_for_status()
+            self.add_failed_count(username)
 
             try:
                 slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
@@ -42,6 +41,10 @@ class AuthenticationService:
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def add_failed_count(self, username: str) -> None:
+        response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
+        response.raise_for_status()
 
     def reset_failed_count(self, username: str) -> None:
         response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
