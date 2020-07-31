@@ -7,6 +7,11 @@ import requests
 import logging
 
 
+class Logging:
+    def log_failed_count(self, message) -> None:
+        logging.info(message)
+
+
 class AuthenticationService:
     def __init__(self):
         self._user: User = User()
@@ -14,6 +19,7 @@ class AuthenticationService:
         self._otp_service: OtpService = OtpService()
         self._failed_counter: FailedCounter = FailedCounter()
         self._slack_adapter: SlackAdapter = SlackAdapter()
+        self._logging: Logging = Logging()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self.is_account_locked(username):
@@ -35,7 +41,7 @@ class AuthenticationService:
             self._slack_adapter.notify(username)
 
             failed_count = self._failed_counter.get_failed_count(username)
-            self.log_failed_count(f'user: {username} failed times: {failed_count}')
+            self._logging.log_failed_count(f'user: {username} failed times: {failed_count}')
 
             return False
 
@@ -44,9 +50,6 @@ class AuthenticationService:
         response.raise_for_status()
         is_acount_locked = response.json()['is_account_locked']
         return is_acount_locked
-
-    def log_failed_count(self, message) -> None:
-        logging.info(message)
 
 
 class FailedTooManyTimesError(OSError):
