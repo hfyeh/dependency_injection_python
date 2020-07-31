@@ -19,7 +19,7 @@ class AuthenticationService:
         if self._failed_counter.is_account_locked(username):
             raise FailedTooManyTimesError()
 
-        password_from_db = self._user.get_password_from_db(username)
+        password_from_db = self._user.get_password(username)
 
         hashed_password = self._sha_256_adapter.compute_hashed_password(password)
 
