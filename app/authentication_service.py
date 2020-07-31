@@ -21,7 +21,7 @@ class AuthenticationService:
 
         password_from_db = self._user.get_password(username)
 
-        hashed_password = self._sha_256_adapter.compute_hashed_password(password)
+        hashed_password = self._sha_256_adapter.compute(password)
 
         current_otp = self._otp_service.get_current_otp(username)
 
