@@ -1,10 +1,17 @@
 import os
+from abc import ABCMeta, abstractmethod
 
 from slack import WebClient
 from slack.errors import SlackApiError
 
 
-class SlackAdapter:
+class INotification(metaclass=ABCMeta):
+    @abstractmethod
+    def notify(self, username: str) -> None:
+        pass
+
+
+class SlackAdapter(INotification):
     def notify(self, username: str) -> None:
         try:
             slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
