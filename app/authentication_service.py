@@ -10,12 +10,22 @@ from slack.errors import SlackApiError
 import logging
 
 
+class SlackAdapter:
+    def notify(self, username: str) -> None:
+        try:
+            slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
+            response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
+        except SlackApiError as e:
+            assert e.response['ok'] is False
+
+
 class AuthenticationService:
     def __init__(self):
         self._user: User = User()
         self._sha_256_adapter: Sha256Adapter = Sha256Adapter()
         self._otp_service: OtpService = OtpService()
         self._failed_counter: FailedCounter = FailedCounter()
+        self._slack_adapter: SlackAdapter = SlackAdapter()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self.is_account_locked(username):
@@ -34,7 +44,7 @@ class AuthenticationService:
         else:
             self._failed_counter.add_failed_count(username)
 
-            self.notify(username)
+            self._slack_adapter.notify(username)
 
             self.log_failed_count(username)
 
@@ -55,13 +65,6 @@ class AuthenticationService:
         response.raise_for_status()
         failed_count = response.json()['failed_count']
         return failed_count
-
-    def notify(self, username: str) -> None:
-        try:
-            slack_client = WebClient(token=os.environ['SLACK_API_TOKEN'])
-            response = slack_client.chat_postMessage(channel='#channel', text=f'{username} failed to login')
-        except SlackApiError as e:
-            assert e.response['ok'] is False
 
 
 class FailedTooManyTimesError(OSError):
