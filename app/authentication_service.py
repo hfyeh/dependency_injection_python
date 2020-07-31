@@ -35,7 +35,7 @@ class AuthenticationService:
             self._slack_adapter.notify(username)
 
             failed_count = self._failed_counter.get_failed_count(username)
-            self.log_failed_count(username, failed_count)
+            self.log_failed_count(f'user: {username} failed times: {failed_count}')
 
             return False
 
@@ -45,8 +45,8 @@ class AuthenticationService:
         is_acount_locked = response.json()['is_account_locked']
         return is_acount_locked
 
-    def log_failed_count(self, username: str, failed_count: int) -> None:
-        logging.info(f'user: {username} failed times: {failed_count}')
+    def log_failed_count(self, message) -> None:
+        logging.info(message)
 
 
 class FailedTooManyTimesError(OSError):
