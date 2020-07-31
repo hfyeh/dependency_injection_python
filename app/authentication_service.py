@@ -20,10 +20,7 @@ class AuthenticationService:
 
         hashed_password = self.compute_hashed_password(password)
 
-        response = requests.post('https://sharefun.com/api/otp', data={username: username})
-        if not (response.status_code == requests.codes.ok):
-            raise PermissionError()
-        current_otp = response.json()['otp']
+        current_otp = self.get_current_otp(username)
 
         if password_from_db == hashed_password and otp == current_otp:
             response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
@@ -46,6 +43,13 @@ class AuthenticationService:
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def get_current_otp(self, username: str) -> str:
+        response = requests.post('https://sharefun.com/api/otp', data={username: username})
+        if not (response.status_code == requests.codes.ok):
+            raise PermissionError()
+        current_otp = response.json()['otp']
+        return current_otp
 
     def compute_hashed_password(self, password: str) -> str:
         crypt = hashlib.sha256()
