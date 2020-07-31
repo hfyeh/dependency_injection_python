@@ -2,7 +2,7 @@ from .failed_counter import FailedCounter, IFailedCounter
 from .logging import Logging
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
-from .slack_adapter import SlackAdapter
+from .slack_adapter import SlackAdapter, INotification
 from .user import User, IUser
 
 
@@ -12,7 +12,7 @@ class AuthenticationService:
         self._hash: IHash = Sha256Adapter()
         self._otp_service: IOtpService = OtpService()
         self._failed_counter: IFailedCounter = FailedCounter()
-        self._slack_adapter: SlackAdapter = SlackAdapter()
+        self._notification: INotification = SlackAdapter()
         self._logging: Logging = Logging()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
@@ -32,7 +32,7 @@ class AuthenticationService:
         else:
             self._failed_counter.add(username)
 
-            self._slack_adapter.notify(username)
+            self._notification.notify(username)
 
             failed_count = self._failed_counter.get(username)
             self._logging.log_failed_count(f'user: {username} failed times: {failed_count}')
