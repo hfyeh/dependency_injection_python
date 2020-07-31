@@ -59,11 +59,12 @@ class AuthenticationServiceTest(unittest.TestCase):
 
     def test_raise_error_when_account_is_locked(self):
         self._given_account_is_locked(True)
-        self._should_raise_error()
+        self._should_raise_error(FailedTooManyTimesError, self._authentication_service.verify,
+                                 [DefaultUsername, DefaultPassword, DefaultOtp])
 
-    def _should_raise_error(self):
-        with self.assertRaises(FailedTooManyTimesError):
-            self._when_verify(DefaultUsername, DefaultPassword, DefaultOtp)
+    def _should_raise_error(self, error, func, args):
+        with self.assertRaises(error):
+            func(*args)
 
     def _should_reset_failed_count(self, username):
         self._failed_counter.reset.assert_called_once_with(username)
