@@ -5,15 +5,15 @@ import requests
 
 class IFailedCounter(metaclass=ABCMeta):
     @abstractmethod
-    def reset_failed_count(self, username: str) -> None:
+    def reset(self, username: str) -> None:
         pass
 
     @abstractmethod
-    def add_failed_count(self, username: str) -> None:
+    def add(self, username: str) -> None:
         pass
 
     @abstractmethod
-    def get_failed_count(self, username: str) -> int:
+    def get(self, username: str) -> int:
         pass
 
     @abstractmethod
@@ -22,15 +22,15 @@ class IFailedCounter(metaclass=ABCMeta):
 
 
 class FailedCounter(IFailedCounter):
-    def reset_failed_count(self, username: str) -> None:
+    def reset(self, username: str) -> None:
         response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
         response.raise_for_status()
 
-    def add_failed_count(self, username: str) -> None:
+    def add(self, username: str) -> None:
         response = requests.post('https://sharefun.com/api/failed_counter/add', data={username: username})
         response.raise_for_status()
 
-    def get_failed_count(self, username: str) -> int:
+    def get(self, username: str) -> int:
         response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
         response.raise_for_status()
         failed_count = response.json()['failed_count']
