@@ -31,12 +31,16 @@ class AuthenticationService:
 
             self.notify(username)
 
-            response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
-            response.raise_for_status()
-            failed_count = response.json()['failed_count']
+            failed_count = self.get_failed_count(username)
             logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def get_failed_count(self, username: str) -> int:
+        response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
+        response.raise_for_status()
+        failed_count = response.json()['failed_count']
+        return failed_count
 
     def notify(self, username: str) -> None:
         try:
