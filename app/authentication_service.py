@@ -9,8 +9,7 @@ import logging
 
 class AuthenticationService:
     def verify(self, username: str, password: str, otp: str) -> bool:
-        is_acount_locked = self.is_account_locked(username)
-        if is_acount_locked:
+        if self.is_account_locked(username):
             raise FailedTooManyTimesError()
 
         password_from_db = self.get_password_from_db(username)
