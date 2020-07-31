@@ -1,5 +1,5 @@
 from .failed_counter import FailedCounter, IFailedCounter
-from .logging import Logging
+from .logging import Logging, ILogging
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
 from .slack_adapter import SlackAdapter, INotification
@@ -13,7 +13,7 @@ class AuthenticationService:
         self._otp_service: IOtpService = OtpService()
         self._failed_counter: IFailedCounter = FailedCounter()
         self._notification: INotification = SlackAdapter()
-        self._logging: Logging = Logging()
+        self._logging: ILogging = Logging()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self._failed_counter.is_account_locked(username):
