@@ -31,10 +31,13 @@ class AuthenticationService:
 
             self.notify(username)
 
-            failed_count = self.get_failed_count(username)
-            logging.info(f'user: {username} failed times: {failed_count}')
+            self.log_failed_count(username)
 
             return False
+
+    def log_failed_count(self, username: str) -> None:
+        failed_count = self.get_failed_count(username)
+        logging.info(f'user: {username} failed times: {failed_count}')
 
     def get_failed_count(self, username: str) -> int:
         response = requests.post('https://sharefun.com/api/get_failed_count', data={username: username})
