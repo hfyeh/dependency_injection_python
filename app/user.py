@@ -22,3 +22,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<id: {self.id}, username: {self.username}, password: {self.password}>'
+
+    def get_password_from_db(self, username: str) -> str:
+        password_from_db = User.query.filter_by(username=username).first().password
+        return password_from_db

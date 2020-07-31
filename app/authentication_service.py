@@ -8,11 +8,14 @@ import logging
 
 
 class AuthenticationService:
+    def __init__(self):
+        self._user: User = User()
+
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self.is_account_locked(username):
             raise FailedTooManyTimesError()
 
-        password_from_db = self.get_password_from_db(username)
+        password_from_db = self._user.get_password_from_db(username)
 
         hashed_password = self.compute_hashed_password(password)
 
@@ -74,10 +77,6 @@ class AuthenticationService:
         crypt.update(password)
         hashed_password = crypt.hexdigest()
         return hashed_password
-
-    def get_password_from_db(self, username: str) -> str:
-        password_from_db = User.query.filter_by(username=username).first().password
-        return password_from_db
 
 
 class FailedTooManyTimesError(OSError):
