@@ -1,5 +1,6 @@
 import os
 
+from .failed_counter import FailedCounter
 from .otp_service import OtpService
 from .sha_256_adapter import Sha256Adapter
 from .user import User
@@ -7,12 +8,6 @@ import requests
 from slack import WebClient
 from slack.errors import SlackApiError
 import logging
-
-
-class FailedCounter:
-    def reset_failed_count(self, username: str) -> None:
-        response = requests.post('https://sharefun.com/api/failed_counter/reset', data={username: username})
-        response.raise_for_status()
 
 
 class AuthenticationService:
