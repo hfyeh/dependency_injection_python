@@ -45,6 +45,9 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._given_otp(DefaultOtp)
 
         is_valid = self._when_verify(DefaultUsername, DefaultPassword, 'wrong_otp')
+        self._should_be_invalid(is_valid)
+
+    def _should_be_invalid(self, is_valid):
         self.assertFalse(is_valid)
 
     def _should_be_valid(self, is_valid):
