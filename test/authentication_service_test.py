@@ -35,8 +35,12 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._given_hash(DefaultHashedPassword)
         self._given_otp(DefaultOtp)
 
-        is_valid = self._authentication_service.verify(DefaultUsername, DefaultPassword, DefaultOtp)
+        is_valid = self._when_verify()
         self.assertTrue(is_valid)
+
+    def _when_verify(self):
+        is_valid = self._authentication_service.verify(DefaultUsername, DefaultPassword, DefaultOtp)
+        return is_valid
 
     def _given_otp(self, otp):
         self._otp_service.get_current_otp = create_autospec(self._otp_service.get_current_otp,
