@@ -7,9 +7,18 @@ from slack.errors import SlackApiError
 import logging
 
 
+class Sha256Adapter:
+    def compute_hashed_password(self, password: str) -> str:
+        crypt = hashlib.sha256()
+        crypt.update(password)
+        hashed_password = crypt.hexdigest()
+        return hashed_password
+
+
 class AuthenticationService:
     def __init__(self):
         self._user: User = User()
+        self._sha_256_adapter: Sha256Adapter = Sha256Adapter()
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self.is_account_locked(username):
@@ -17,7 +26,7 @@ class AuthenticationService:
 
         password_from_db = self._user.get_password_from_db(username)
 
-        hashed_password = self.compute_hashed_password(password)
+        hashed_password = self._sha_256_adapter.compute_hashed_password(password)
 
         current_otp = self.get_current_otp(username)
 
@@ -71,12 +80,6 @@ class AuthenticationService:
             raise PermissionError()
         current_otp = response.json()['otp']
         return current_otp
-
-    def compute_hashed_password(self, password: str) -> str:
-        crypt = hashlib.sha256()
-        crypt.update(password)
-        hashed_password = crypt.hexdigest()
-        return hashed_password
 
 
 class FailedTooManyTimesError(OSError):
