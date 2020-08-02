@@ -11,6 +11,14 @@ class FailedCounterDecorator(AuthenticationBaseDecorator):
         if self._failed_counter.is_account_locked(username):
             raise FailedTooManyTimesError()
 
+    def reset(self, username):
+        self._failed_counter.reset(username)
+
     def verify(self, username: str, password: str, otp: str) -> bool:
         self.check_account_is_locked(username)
-        return super().verify(username, password, otp)
+
+        is_valid = super().verify(username, password, otp)
+        if is_valid:
+            self.reset(username)
+
+        return is_valid

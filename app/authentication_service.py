@@ -41,8 +41,6 @@ class AuthenticationService(IAuthenticationService):
         current_otp = self._otp_service.get_current_otp(username)
 
         if password_from_db == hashed_password and otp == current_otp:
-            self._failed_counter.reset(username)
-
             return True
         else:
             self._failed_counter.add(username)
