@@ -14,11 +14,16 @@ class FailedCounterDecorator(AuthenticationBaseDecorator):
     def reset(self, username):
         self._failed_counter.reset(username)
 
+    def add(self, username):
+        self._failed_counter.add(username)
+
     def verify(self, username: str, password: str, otp: str) -> bool:
         self.check_account_is_locked(username)
 
         is_valid = super().verify(username, password, otp)
         if is_valid:
             self.reset(username)
+        else:
+            self.add(username)
 
         return is_valid

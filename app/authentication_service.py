@@ -43,8 +43,6 @@ class AuthenticationService(IAuthenticationService):
         if password_from_db == hashed_password and otp == current_otp:
             return True
         else:
-            self._failed_counter.add(username)
-
             failed_count = self._failed_counter.get(username)
             self._logging.info(f'user: {username} failed times: {failed_count}')
 
