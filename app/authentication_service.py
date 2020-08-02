@@ -42,12 +42,15 @@ class AuthenticationService(IAuthenticationService):
         else:
             self._failed_counter.add(username)
 
-            self._notification.notify(username)
+            self.notify(username)
 
             failed_count = self._failed_counter.get(username)
             self._logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def notify(self, username):
+        self._notification.notify(username)
 
 
 class FailedTooManyTimesError(OSError):
