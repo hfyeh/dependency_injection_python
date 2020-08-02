@@ -21,20 +21,6 @@ class AuthenticationBaseDecorator(IAuthenticationService):
         return self._authentication_service.verify(username, password, otp)
 
 
-class FailedCounterDecorator(AuthenticationBaseDecorator):
-    def __init__(self, authentication_service: IAuthenticationService, failed_counter: IFailedCounter):
-        super().__init__(authentication_service)
-        self._failed_counter = failed_counter
-
-    def check_account_is_locked(self, username):
-        if self._failed_counter.is_account_locked(username):
-            raise FailedTooManyTimesError()
-
-    def verify(self, username: str, password: str, otp: str) -> bool:
-        self.check_account_is_locked(username)
-        return super().verify(username, password, otp)
-
-
 class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
                  failed_counter: IFailedCounter = FailedCounter(), logging: ILogging = Logging()):
