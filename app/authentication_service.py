@@ -1,3 +1,5 @@
+from abc import ABCMeta, abstractmethod
+
 from .failed_counter import FailedCounter, IFailedCounter
 from .logging import Logging, ILogging
 from .otp_service import OtpService, IOtpService
@@ -6,7 +8,13 @@ from .slack_adapter import SlackAdapter, INotification
 from .user import User, IUser
 
 
-class AuthenticationService:
+class IAuthenticationService(metaclass=ABCMeta):
+    @abstractmethod
+    def verify(self, username: str, password: str, otp: str) -> bool:
+        pass
+
+
+class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
                  failed_counter: IFailedCounter = FailedCounter(), notification: INotification = SlackAdapter(),
                  logging: ILogging = Logging()):
