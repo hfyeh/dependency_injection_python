@@ -4,7 +4,6 @@ from app.logging_decorator import LoggingDecorator
 from app.notification_decorator import NotificationDecorator
 
 import dependency_injector.providers as providers
-import dependency_injector.containers as containers
 
 
 class FakeSlack(INotification):
@@ -58,15 +57,16 @@ class Containers:
     otp = providers.Factory(FakeOtp)
     authentication = providers.Factory(AuthenticationService, user, hash, otp)
 
+    failed_counter = providers.Factory(FakeFailedCounter)
+    notification = providers.Factory(FakeSlack)
+    logging = providers.Factory(FakeLogging)
+
+    authentication = providers.Factory(NotificationDecorator, authentication, notification)
+    authentication = providers.Factory(FailedCounterDecorator, authentication, failed_counter)
+    authentication = providers.Factory(LoggingDecorator, authentication, logging, failed_counter)
+
 
 if __name__ == '__main__':
-    notification = FakeSlack()
-    logging = FakeLogging()
-    failed_counter = FakeFailedCounter()
-
     authentication_service = Containers.authentication()
-    authentication_service = NotificationDecorator(authentication_service, notification)
-    authentication_service = FailedCounterDecorator(authentication_service, failed_counter)
-    authentication_service = LoggingDecorator(authentication_service, logging, failed_counter)
     authentication_service.verify("sharefun", "123456", "current_otp")
     exit(0)
