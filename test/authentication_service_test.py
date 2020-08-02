@@ -25,8 +25,7 @@ class AuthenticationServiceTest(unittest.TestCase):
         self._hash = mock.Mock()
         self._user = mock.Mock()
 
-        self._authentication_service = AuthenticationService(self._user, self._hash, self._otp_service,
-                                                             self._failed_counter, self._logging)
+        self._authentication_service = AuthenticationService(self._user, self._hash, self._otp_service)
         self._authentication_service = NotificationDecorator(self._authentication_service,
                                                              self._notification)
         self._authentication_service = FailedCounterDecorator(self._authentication_service,

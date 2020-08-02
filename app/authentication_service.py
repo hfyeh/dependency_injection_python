@@ -1,8 +1,5 @@
 from abc import ABCMeta, abstractmethod
 
-from .failed_counter import FailedCounter, IFailedCounter
-from .logging import Logging, ILogging
-# from .logging_decorator import LoggingDecorator
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
 from .user import User, IUser
@@ -23,19 +20,12 @@ class AuthenticationBaseDecorator(IAuthenticationService):
 
 
 class AuthenticationService(IAuthenticationService):
-    def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
-                 failed_counter: IFailedCounter = FailedCounter(), logging: ILogging = Logging()):
+    def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService()):
         self._user: IUser = user
         self._hash: IHash = hash
         self._otp_service: IOtpService = otp_service
-        self._failed_counter: IFailedCounter = failed_counter
-        self._logging: ILogging = logging
-        # self._failed_counter_decorator = FailedCounterDecorator(self, failed_counter)
-        # self._logging_decorator = LoggingDecorator(self, logging, failed_counter)
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        # self._failed_counter_decorator.check_account_is_locked(username)
-
         password_from_db = self._user.get_password(username)
 
         hashed_password = self._hash.compute(password)
@@ -45,8 +35,6 @@ class AuthenticationService(IAuthenticationService):
         if password_from_db == hashed_password and otp == current_otp:
             return True
         else:
-            # self._logging_decorator.log_message(username)
-
             return False
 
 
