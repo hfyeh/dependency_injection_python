@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from .failed_counter import FailedCounter, IFailedCounter
 from .logging import Logging, ILogging
+from .notification_decorator import NotificationDecorator
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
 from .slack_adapter import SlackAdapter, INotification
@@ -12,22 +13,6 @@ class IAuthenticationService(metaclass=ABCMeta):
     @abstractmethod
     def verify(self, username: str, password: str, otp: str) -> bool:
         pass
-
-
-class NotificationDecorator(IAuthenticationService):
-    def __init__(self, authentication_service: IAuthenticationService, notification: INotification):
-        self._authentication_service = authentication_service
-        self._notification = notification
-
-    def notify(self, username):
-        self._notification.notify(username)
-
-    def verify(self, username: str, password: str, otp: str) -> bool:
-        is_valid = self._authentication_service.verify(username, password, otp)
-        if not is_valid:
-            self.notify(username)
-
-        return is_valid
 
 
 class AuthenticationService(IAuthenticationService):
