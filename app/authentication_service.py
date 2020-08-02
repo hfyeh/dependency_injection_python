@@ -31,8 +31,7 @@ class AuthenticationService(IAuthenticationService):
         self._logging: ILogging = logging
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        if self._failed_counter.is_account_locked(username):
-            raise FailedTooManyTimesError()
+        self.check_account_is_locked(username)
 
         password_from_db = self._user.get_password(username)
 
@@ -51,6 +50,10 @@ class AuthenticationService(IAuthenticationService):
             self._logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
+
+    def check_account_is_locked(self, username):
+        if self._failed_counter.is_account_locked(username):
+            raise FailedTooManyTimesError()
 
 
 class FailedTooManyTimesError(OSError):
