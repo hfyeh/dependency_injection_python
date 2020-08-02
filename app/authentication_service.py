@@ -14,6 +14,14 @@ class IAuthenticationService(metaclass=ABCMeta):
         pass
 
 
+class NotificationDecorator:
+    def __init__(self, authentication_service: IAuthenticationService):
+        self._authentication_service = authentication_service
+
+    def notify(self, username):
+        self._authentication_service._notification.notify(username)
+
+
 class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
                  failed_counter: IFailedCounter = FailedCounter(), notification: INotification = SlackAdapter(),
@@ -24,6 +32,8 @@ class AuthenticationService(IAuthenticationService):
         self._failed_counter: IFailedCounter = failed_counter
         self._notification: INotification = notification
         self._logging: ILogging = logging
+        self._notification_decorator = NotificationDecorator(self)
+
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self._failed_counter.is_account_locked(username):
@@ -42,15 +52,12 @@ class AuthenticationService(IAuthenticationService):
         else:
             self._failed_counter.add(username)
 
-            self.notify(username)
+            self._notification_decorator.notify(username)
 
             failed_count = self._failed_counter.get(username)
             self._logging.info(f'user: {username} failed times: {failed_count}')
 
             return False
-
-    def notify(self, username):
-        self._notification.notify(username)
 
 
 class FailedTooManyTimesError(OSError):
