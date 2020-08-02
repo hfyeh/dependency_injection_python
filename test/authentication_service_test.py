@@ -3,7 +3,7 @@ from unittest import mock
 from unittest.mock import create_autospec
 
 from app import AuthenticationService, FailedTooManyTimesError
-from app.authentication_service import LoggingDecorator
+from app.logging_decorator import LoggingDecorator
 from app.failed_counter_decorator import FailedCounterDecorator
 from app.notification_decorator import NotificationDecorator
 
