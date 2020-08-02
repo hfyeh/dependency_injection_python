@@ -32,6 +32,14 @@ class LoggingDecorator(AuthenticationBaseDecorator):
         failed_count = self._failed_counter.get(username)
         self._logging.info(f'user: {username} failed times: {failed_count}')
 
+    def verify(self, username: str, password: str, otp: str) -> bool:
+        is_valid = super().verify(username, password, otp)
+
+        if not is_valid:
+            self.log_message(username)
+
+        return is_valid
+
 
 class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
@@ -56,7 +64,7 @@ class AuthenticationService(IAuthenticationService):
         if password_from_db == hashed_password and otp == current_otp:
             return True
         else:
-            self._logging_decorator.log_message(username)
+            # self._logging_decorator.log_message(username)
 
             return False
 
