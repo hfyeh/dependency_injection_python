@@ -3,6 +3,9 @@ from app.failed_counter_decorator import FailedCounterDecorator
 from app.logging_decorator import LoggingDecorator
 from app.notification_decorator import NotificationDecorator
 
+import dependency_injector.providers as providers
+import dependency_injector.containers as containers
+
 
 class FakeSlack(INotification):
     def notify(self, username: str) -> None:
@@ -48,14 +51,20 @@ class FakeUser(IUser):
         return "hashed_password"
 
 
+class Containers:
+    """ IoC container """
+    user = providers.Factory(FakeUser)
+    hash = providers.Factory(FakeHash)
+    otp = providers.Factory(FakeOtp)
+    authentication = providers.Factory(AuthenticationService, user, hash, otp)
+
+
 if __name__ == '__main__':
     notification = FakeSlack()
     logging = FakeLogging()
     failed_counter = FakeFailedCounter()
-    otp_service = FakeOtp()
-    hash = FakeHash()
-    user = FakeUser()
-    authentication_service = AuthenticationService(user, hash, otp_service)
+
+    authentication_service = Containers.authentication()
     authentication_service = NotificationDecorator(authentication_service, notification)
     authentication_service = FailedCounterDecorator(authentication_service, failed_counter)
     authentication_service = LoggingDecorator(authentication_service, logging, failed_counter)
