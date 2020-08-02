@@ -1,13 +1,5 @@
 from app import INotification
-from app.authentication_service import IAuthenticationService
-
-
-class AuthenticationBaseDecorator(IAuthenticationService):
-    def __init__(self, authentication_service: IAuthenticationService):
-        self._authentication_service = authentication_service
-
-    def verify(self, username: str, password: str, otp: str) -> bool:
-        return self._authentication_service.verify(username, password, otp)
+from app.authentication_service import IAuthenticationService, AuthenticationBaseDecorator
 
 
 class NotificationDecorator(AuthenticationBaseDecorator):

@@ -15,6 +15,14 @@ class IAuthenticationService(metaclass=ABCMeta):
         pass
 
 
+class AuthenticationBaseDecorator(IAuthenticationService):
+    def __init__(self, authentication_service: IAuthenticationService):
+        self._authentication_service = authentication_service
+
+    def verify(self, username: str, password: str, otp: str) -> bool:
+        return self._authentication_service.verify(username, password, otp)
+
+
 class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
                  failed_counter: IFailedCounter = FailedCounter(), notification: INotification = SlackAdapter(),
