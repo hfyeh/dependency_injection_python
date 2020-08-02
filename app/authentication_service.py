@@ -15,11 +15,12 @@ class IAuthenticationService(metaclass=ABCMeta):
 
 
 class NotificationDecorator:
-    def __init__(self, authentication_service: IAuthenticationService):
+    def __init__(self, authentication_service: IAuthenticationService, notification: INotification):
         self._authentication_service = authentication_service
+        self._notification = notification
 
     def notify(self, username):
-        self._authentication_service._notification.notify(username)
+        self._notification.notify(username)
 
 
 class AuthenticationService(IAuthenticationService):
@@ -30,9 +31,9 @@ class AuthenticationService(IAuthenticationService):
         self._hash: IHash = hash
         self._otp_service: IOtpService = otp_service
         self._failed_counter: IFailedCounter = failed_counter
-        self._notification: INotification = notification
+        # self._notification: INotification = notification
         self._logging: ILogging = logging
-        self._notification_decorator = NotificationDecorator(self)
+        self._notification_decorator = NotificationDecorator(self, notification)
 
 
     def verify(self, username: str, password: str, otp: str) -> bool:
