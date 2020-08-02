@@ -7,7 +7,7 @@ class AuthenticationBaseDecorator(IAuthenticationService):
         self._authentication_service = authentication_service
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        NotImplementedError
+        return self._authentication_service.verify(username, password, otp)
 
 
 class NotificationDecorator(AuthenticationBaseDecorator):
@@ -19,7 +19,7 @@ class NotificationDecorator(AuthenticationBaseDecorator):
         self._notification.notify(username)
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        is_valid = self._authentication_service.verify(username, password, otp)
+        is_valid = super().verify(username, password, otp)
         if not is_valid:
             self.notify(username)
 
