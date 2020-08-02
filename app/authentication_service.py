@@ -30,6 +30,10 @@ class FailedCounterDecorator(AuthenticationBaseDecorator):
         if self._failed_counter.is_account_locked(username):
             raise FailedTooManyTimesError()
 
+    def verify(self, username: str, password: str, otp: str) -> bool:
+        self.check_account_is_locked(username)
+        return super().verify(username, password, otp)
+
 
 class AuthenticationService(IAuthenticationService):
     def __init__(self, user: IUser = User(), hash: IHash = Sha256Adapter(), otp_service: IOtpService = OtpService(),
@@ -39,10 +43,10 @@ class AuthenticationService(IAuthenticationService):
         self._otp_service: IOtpService = otp_service
         self._failed_counter: IFailedCounter = failed_counter
         self._logging: ILogging = logging
-        self._failed_counter_decorator = FailedCounterDecorator(self, failed_counter)
+        # self._failed_counter_decorator = FailedCounterDecorator(self, failed_counter)
 
     def verify(self, username: str, password: str, otp: str) -> bool:
-        self._failed_counter_decorator.check_account_is_locked(username)
+        # self._failed_counter_decorator.check_account_is_locked(username)
 
         password_from_db = self._user.get_password(username)
 
