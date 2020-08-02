@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import create_autospec
 
 from app import AuthenticationService, FailedTooManyTimesError
+from app.notification_decorator import NotificationDecorator
 
 DefaultHashedPassword = 'hashed_password'
 
@@ -28,6 +29,8 @@ class AuthenticationServiceTest(unittest.TestCase):
                                                              self._failed_counter,
                                                              self._notification,
                                                              self._logging)
+        self._authentication_service = NotificationDecorator(self._authentication_service,
+                                                             self._notification)
 
     def test_is_valid(self):
         is_valid = self._when_valid()

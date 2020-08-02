@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from .failed_counter import FailedCounter, IFailedCounter
 from .logging import Logging, ILogging
-from .notification_decorator import NotificationDecorator
+# from .notification_decorator import NotificationDecorator
 from .otp_service import OtpService, IOtpService
 from .sha_256_adapter import Sha256Adapter, IHash
 from .slack_adapter import SlackAdapter, INotification
@@ -25,7 +25,7 @@ class AuthenticationService(IAuthenticationService):
         self._failed_counter: IFailedCounter = failed_counter
         # self._notification: INotification = notification
         self._logging: ILogging = logging
-        self._notification_decorator = NotificationDecorator(self, notification)
+        # self._notification_decorator = NotificationDecorator(self, notification)
 
     def verify(self, username: str, password: str, otp: str) -> bool:
         if self._failed_counter.is_account_locked(username):
@@ -44,7 +44,7 @@ class AuthenticationService(IAuthenticationService):
         else:
             self._failed_counter.add(username)
 
-            self._notification_decorator.notify(username)
+            # self._notification_decorator.notify(username)
 
             failed_count = self._failed_counter.get(username)
             self._logging.info(f'user: {username} failed times: {failed_count}')
