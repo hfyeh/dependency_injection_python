@@ -52,10 +52,10 @@ class AuthenticationServiceTest(unittest.TestCase):
 
     def test_notify_user_when_invalid(self):
         is_valid = self._when_invalid()
-        self._should_notify_user()
+        self._should_notify_user(DefaultUsername)
 
-    def _should_notify_user(self):
-        self._notification.notify.assert_called_once_with(DefaultUsername)
+    def _should_notify_user(self, username):
+        self._notification.notify.assert_called_once_with(username)
 
     def _should_get_failed_count(self, username):
         self._failed_counter.get.assert_called_once_with(username)
