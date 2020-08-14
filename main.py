@@ -59,5 +59,5 @@ if __name__ == '__main__':
     authentication_service = NotificationDecorator(authentication_service, notification)
     authentication_service = FailedCounterDecorator(authentication_service, failed_counter)
     authentication_service = LoggingDecorator(authentication_service, logging, failed_counter)
-    authentication_service.verify("sharefun", "123456", "current otp")
+    authentication_service.verify("sharefun", "123456", "current_otp")
     exit(0)
